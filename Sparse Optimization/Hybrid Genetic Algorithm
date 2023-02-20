@@ -1,0 +1,53 @@
+## This a code example from ChatGPT, which surprised me a lot.
+## Notes: Don't forget to change the `fitness()` function to your own problem. Tune the parameters before usage.
+
+
+import random
+import math
+
+# define fitness function
+def fitness(x):
+    return x * math.sin(10 * math.pi * x) + 2.0
+
+# define hybrid genetic algorithm function
+def hybrid_genetic_algorithm(pop_size, num_parents, mutation_rate, num_generations):
+    # define initial population
+    population = []
+    for i in range(pop_size):
+        population.append(random.uniform(-1.0, 2.0))
+    
+    # run the genetic algorithm
+    for generation in range(num_generations):
+        # evaluate fitness of population
+        fitness_scores = [fitness(x) for x in population]
+        
+        # select parents for mating
+        parent_indices = sorted(range(len(fitness_scores)), key=lambda i: fitness_scores[i], reverse=True)[:num_parents]
+        parents = [population[i] for i in parent_indices]
+        
+        # perform crossover and mutation to create offspring
+        offspring = []
+        while len(offspring) < pop_size:
+            parent1 = random.choice(parents)
+            parent2 = random.choice(parents)
+            child = (parent1 + parent2) / 2.0
+            if random.random() < mutation_rate:
+                child += random.gauss(0, 0.1)
+            offspring.append(child)
+        
+        # replace old population with new offspring
+        population = offspring
+    
+    # select best individual from final population
+    fitness_scores = [fitness(x) for x in population]
+    best_index = max(range(len(fitness_scores)), key=lambda i: fitness_scores[i])
+    best_individual = population[best_index]
+    
+    # return best individual and its fitness value
+    return (best_individual, fitness(best_individual))
+
+# run the hybrid genetic algorithm function with some example parameters
+result = hybrid_genetic_algorithm(pop_size=100, num_parents=50, mutation_rate=0.1, num_generations=50)
+
+# print the result
+print("Best individual: x = {:.3f}, fitness = {:.3f}".format(result[0], result[1]))
